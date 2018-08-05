@@ -1,0 +1,15 @@
+{
+  "name": "hyperhtml-sample-components",
+  "scripts": {
+    "start": "concurrently -k \"http-server ./src -s -p 8081\" \"webpack -w\""
+  },
+  "devDependencies": {
+    "concurrently": "^3.4.0",
+    "http-server": "^0.10.0",
+    "webpack": "^2.5.1",
+    "webpack-notifier": "^1.5.0"
+  },
+  "dependencies": {
+    "hyperhtml-element": "^2.1.1"
+  }
+}

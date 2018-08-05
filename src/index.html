@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>HyperHTML-Elements teest</title>
+</head>
+<body>
+
+  
+    <script src="bundle.js"></script>
+
+    <my-address id="myAddress" address='{"street": "musterstr 1", "city": "muststadt"}'></my-address>
+
+    <br/>
+    <button id="newAddressBtn">Neue Adresse</button>
+
+    <script>
+      document.getElementById('newAddressBtn').addEventListener('click', function () {
+          document.getElementById('myAddress').address = {street: 'new street', city: 'new city'};
+      });
+    </script>
+</body>
+</html>
