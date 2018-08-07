@@ -4,6 +4,13 @@ import HyperHTMLElement from 'hyperhtml-element';
 
 class AddressElement extends HyperHTMLElement {
 
+    constructor() {
+        super();
+        this.attachShadow({mode: 'open'});
+        // const observer = new MutationObserver(changes => this.render());
+        // observer.observe(this, {childList: true});
+    }
+
     static get observedAttributes() {
         return ['address'];
     }
@@ -29,9 +36,20 @@ class AddressElement extends HyperHTMLElement {
     }
 
     render() {
+        // when using without shadowDom and slot
+        // const customButtonElem = this.querySelectorAll("button");
+        // return this.html`
+        //     Street: ${this.state.address.street}<br/>
+        //     City: ${this.state.address.city} <br/>
+        //     Custom button: ${customButtonElem}<br/>
+        //     End of things`;
+
+
         return this.html`
             Street: ${this.state.address.street}<br/>
-            City: ${this.state.address.city}`;
+            City: ${this.state.address.city} <br/>
+            Custom button: <slot></slot><br/>
+            End of things`;
     }
 
     get defaultState() {

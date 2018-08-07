@@ -11,14 +11,21 @@
   
     <script src="bundle.js"></script>
 
-    <my-address id="myAddress" address='{"street": "musterstr 1", "city": "muststadt"}'></my-address>
+    <my-address id="myAddress" address='{"street": "musterstr 1", "city": "muststadt"}'>
+        <button id="clickMe">Click me</button>
+    </my-address>
 
     <br/>
+
     <button id="newAddressBtn">Neue Adresse</button>
 
     <script>
       document.getElementById('newAddressBtn').addEventListener('click', function () {
           document.getElementById('myAddress').address = {street: 'new street', city: 'new city'};
+      });
+
+      document.getElementById('clickMe').addEventListener('click', function () {
+          console.log('clicked');
       });
     </script>
 </body>
