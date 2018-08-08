@@ -8,25 +8,37 @@
 </head>
 <body>
 
-  
     <script src="bundle.js"></script>
 
-    <my-address id="myAddress" address='{"street": "musterstr 1", "city": "muststadt"}'>
-        <button id="clickMe">Click me</button>
-    </my-address>
+    <x-slider>
+        <x-slide>First</x-slide>
+        <x-slide>Second</x-slide>
+        <x-slide>Third</x-slide>
+    </x-slider>
 
-    <br/>
 
-    <button id="newAddressBtn">Neue Adresse</button>
+    <!--<x-wrapper></x-wrapper>-->
+  <!---->
+    <!---->
 
-    <script>
-      document.getElementById('newAddressBtn').addEventListener('click', function () {
-          document.getElementById('myAddress').address = {street: 'new street', city: 'new city'};
-      });
+    <!--<my-address id="myAddress" address='{"street": "musterstr 1", "city": "muststadt"}'>-->
+        <!--<button id="clickMe">Click me</button>-->
+    <!--</my-address>-->
 
-      document.getElementById('clickMe').addEventListener('click', function () {
-          console.log('clicked');
-      });
-    </script>
+    <!--<br/>-->
+
+    <!--<button id="newAddressBtn">Neue Adresse</button>-->
+
+
+
+    <!--<script>-->
+      <!--document.getElementById('newAddressBtn').addEventListener('click', function () {-->
+          <!--document.getElementById('myAddress').address = {street: 'new street', city: 'new city'};-->
+      <!--});-->
+      <!---->
+      <!--document.getElementById('clickMe').addEventListener('click', function () {-->
+          <!--console.log('clicked');-->
+      <!--});-->
+    <!--</script>-->
 </body>
 </html>

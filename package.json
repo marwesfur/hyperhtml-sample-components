@@ -4,6 +4,7 @@
     "start": "concurrently -k \"http-server ./src -s -p 8081\" \"webpack -w\""
   },
   "devDependencies": {
+    "babel-loader": "^7.1.5",
     "concurrently": "^3.4.0",
     "http-server": "^0.10.0",
     "webpack": "^2.5.1",
