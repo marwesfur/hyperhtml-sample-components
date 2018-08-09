@@ -1,48 +1,78 @@
 import HyperHTMLElement from 'hyperhtml-element';
 
 
-class BioComponent extends HyperHTMLElement {
+class BioComponent<TProps extends object, TState> extends HyperHTMLElement<TState> {
 
-    static get observedAttributes() {
-        return ['props'];
+    private _props: TProps; 
+    
+    get props(): TProps {
+        return {...(<any>this.defaultProps), ...(<any>this.propsFromAttributes), ...(<any>this._props)};
     }
 
-    // todo: check if we have received props through an attribute. maybe in created or connected?
-    get props() {
-        return this._props;
-    }
-
-    // when setting "props" as a property, exepct an object
     set props(value) {
         this._props = value;
-        if (!this._init$) {
-            this.render(); // assume, that an element is already in the dom and we change its props -- then we need to re-render...
-            // when going through attributes, HyperHTMLElement automatically triggers render for us
-        }
+        this.onPropsChanged();
+    }
+
+    get propsFromAttributes(): TProps {
+        return null;
+    }
+
+    get defaultProps(): TProps {
+        return null;
+    }
+
+    // overwrite if you eg need to merge into your state
+    onPropsChanged() {
+        this.render();
     }
 }
 
 
-class Slide extends BioComponent {
+interface SlideProps {
+    isSelected: boolean;
+}
+
+interface SlideState {
+
+}
+
+class Slide extends BioComponent<SlideProps, SlideState> {
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
     }
 
+    get defaultProps() {
+        return {isSelected: this.hasAttribute('selected')};
+    }
+
+    created() {
+        this.render();
+    }
+
     render() {
-        const isSelected = this.props && this.props.isSelected;
+        const isSelected = this.props.isSelected;
 
         return isSelected
             ? this.html`<div class="slide"><slot></slot></div>`
-            : this.html`<div class="slide"></div>`;
+            : this.html``;
     }
-
 }
 
 Slide.define('x-slide');
 
-class Slider extends BioComponent {
+interface SliderProps {
+    selected: number;
+}
+
+interface SliderState {
+    lastSelected: number;
+    selected: number;
+}
+
+class Slider extends BioComponent<SliderProps, SliderState> {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
@@ -50,7 +80,7 @@ class Slider extends BioComponent {
         // re-render when children have changed. Note that childNodes is empty when connectedCallback is called
         // note also, that created() is called when initial childNodes are available. so maybe only re-render
         // on child note changes after created has been called
-        const observer = new MutationObserver(changes => !this._init$ && this.render());
+        const observer = new MutationObserver(changes => !(<any>this)._init$ && this.render());
         observer.observe(this, {childList: true});
 
         this.onNextSlide = this.onNextSlide.bind(this);
@@ -58,19 +88,32 @@ class Slider extends BioComponent {
         this.onSelectSlide = this.onSelectSlide.bind(this);
     }
 
+    get defaultState() {
+        return {lastSelected: 0, selected: 0};
+    }
+
+    onPropsChanged() {
+        this.setState({selected: this.props.selected});
+    }
+
     created() {
+        this.onPropsChanged();
         this.render();
     }
 
     get defaultProps() {
-        return {selected: 0};
+        var initiallySelectedSlide = this.hasAttribute('selected')
+            ? parseInt(this.getAttribute('selected'), 10)
+            : 0;
+
+        return {selected: initiallySelectedSlide};
     }
 
     render() {
-        const props = this.props || this.defaultProps;
+        const {selected} = this.state;
         const slidesCount = this.slidesCount;
 
-        this.slides.forEach((slide, idx) => slide.props = {isSelected: idx === props.selected});
+        this.slides.forEach((slide, idx) => slide.props = {isSelected: idx === selected});
 
         return this.html`
             <x-stepper direction="prev" onclick=${this.onPrevSlide}></x-stepper>
@@ -79,33 +122,32 @@ class Slider extends BioComponent {
             </div>
             <x-stepper direction="next" onclick=${this.onNextSlide}></x-stepper>
             <x-dots 
-                props=${ {count: slidesCount, selected: props.selected} }
+                props=${ {count: slidesCount, selected} }
                 onselectSlide=${this.onSelectSlide}></x-dots>
         `;
     }
 
     onSelectSlide(e) {
-        this.props = {selected: e.detail};
+        this.setSelectedSlide(e.detail);
+    }
 
+    setSelectedSlide(selected) {
+        this.setState({lastSelected: this.state.selected, selected});
         this.raiseSlideChange();
     }
 
     onPrevSlide() {
-        const {selected} = this.props || this.defaultProps;
+        const {selected} = this.state;
         const slidesCount = this.slidesCount;
 
-        this.props = {selected: (selected - 1 + slidesCount) % slidesCount };
-
-        this.raiseSlideChange();
+        this.setSelectedSlide((selected - 1 + slidesCount) % slidesCount);
     }
 
     onNextSlide() {
-        const {selected} = this.props || this.defaultProps;
+        const {selected} = this.state;
         const slidesCount = this.slidesCount;
 
-        this.props = {selected: (selected + 1) % slidesCount };
-
-        this.raiseSlideChange();
+        this.setSelectedSlide((selected + 1) % slidesCount);
     }
 
     raiseSlideChange() {
@@ -119,7 +161,7 @@ class Slider extends BioComponent {
     }
 
     get slides() {
-        return [...this.childNodes].filter((n) => n instanceof Slide);
+        return [...(<any>this.childNodes)].filter((n) => n instanceof Slide);
     }
 
     get slidesCount() {
@@ -129,7 +171,16 @@ class Slider extends BioComponent {
 
 Slider.define('x-slider');
 
-class Dots extends BioComponent {
+interface DotsProps {
+    selected: number;
+    count: number
+}
+
+interface DotsState {
+
+}
+
+class Dots extends BioComponent<DotsProps, DotsState> {
 
     created() {
         this.render();
@@ -162,7 +213,7 @@ class Dots extends BioComponent {
 Dots.define('x-dots');
 
 
-class Stepper extends BioComponent {
+class Stepper extends BioComponent<{},{}> {
 
     created() {
         this.render();

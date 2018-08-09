@@ -4,7 +4,7 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 
 module.exports = {
     entry: [
-        './src/index.js'
+        './src/index.ts'
     ],
     output: {
         path: path.join(__dirname, './src'),
@@ -21,6 +21,13 @@ module.exports = {
         contentBase: './'
     },
     resolve: {
+        extensions: [".ts", ".tsx", ".js"],
         mainFields: ['browserify', 'browser', 'module', 'main']
+    },
+    module: {
+        rules: [
+            // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+            { test: /\.tsx?$/, loader: 'ts-loader' }
+        ]
     }
 }
